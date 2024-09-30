@@ -30,3 +30,15 @@ TEST(ExtractSubstr, ReturnsStringBetweenDelimiters) {
 
     EXPECT_THAT(extract_substr(str, left_delimiter, right_delimiter), Eq(data));
 }
+
+TEST(AsVector, GetsAStringWithCommaSeparatedValuesAndReturnsAVector) {
+    const auto str = std::string{"[1,2,]"};
+
+    EXPECT_THAT(as_vector<int>(str), Eq(std::vector{1, 2}));
+}
+
+TEST(AsVector, WorksWithDoubles) {
+    const auto str = std::string{"[16.9165,16.7611,18.7212,]"};
+
+    EXPECT_THAT(as_vector<double>(str), Eq(std::vector{16.9165, 16.7611, 18.7212}));
+}
