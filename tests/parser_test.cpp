@@ -4,6 +4,7 @@
 #include <parser.hpp>
 
 using namespace playground::parser;
+using testing::Eq;
 
 TEST(IsHeader, ReturnsTrueIfLineIsHeader) {
     const auto header_line = std::string{"****** reading METIS data form time= 30 mins *********"};
@@ -13,4 +14,9 @@ TEST(IsHeader, ReturnsTrueIfLineIsHeader) {
 TEST(IsHeader, ReturnsFalseIfLineIsNotHeader) {
     const auto data_line = std::string{"timeMpiSend=[0,]"};
     EXPECT_FALSE(is_header(data_line));
+}
+
+TEST(GetSimulationTime, ReturnsTheSimulationTimeFromHeader) {
+    const auto header_line = std::string{"****** reading METIS data form time= 30 mins *********"};
+    EXPECT_THAT(get_simulation_time(header_line), Eq(30));
 }
