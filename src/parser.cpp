@@ -5,6 +5,8 @@
 
 #include "utils.hpp"
 
+#include <map>
+
 namespace playground::parser {
     namespace internal {
         auto is_time_mpi_send_key(const std::string &key) -> bool { return key == "timeMpiSend"; }
@@ -78,5 +80,23 @@ namespace playground::parser {
         const auto metric_type = as_metric_type(metric_key).value();
         const auto values = internal::get_values(values_list, metric_type);
         return {metric_type, values};
+    }
+
+    auto parse_document(std::istream &input) -> std::map<SimulationTime, std::vector<MetricEntry>> {
+        auto result = std::map<SimulationTime, std::vector<MetricEntry>>{};
+
+        SimulationTime time{};
+        auto line = std::string{};
+        while (std::getline(input, line)) {
+            if (is_header(line)) {
+                time = get_simulation_time(line);
+                result.emplace(time, std::vector<MetricEntry>{});
+            } else {
+                const auto [metric_type, values] = parse_metric_line(line);
+                result.at(time).emplace_back(metric_type, values);
+            }
+        }
+
+        return result;
     }
 }// namespace playground::parser

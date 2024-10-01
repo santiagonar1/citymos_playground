@@ -1,6 +1,7 @@
 #ifndef PARSER_HPP
 #define PARSER_HPP
 
+#include <map>
 #include <optional>
 #include <sstream>
 #include <string>
@@ -19,6 +20,8 @@ namespace playground::parser {
 
     [[nodiscard]] auto parse_metric_line(const std::string &metric_line) -> MetricEntry;
 
+    [[nodiscard]] auto parse_document(std::istream &input)
+            -> std::map<SimulationTime, std::vector<MetricEntry>>;
 
     template<typename T>
     [[nodiscard]] auto as_vector(const std::string &str) -> std::vector<T> {

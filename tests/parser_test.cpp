@@ -106,3 +106,28 @@ TEST(ParseMetricLine, WorksForIntegerMetrics) {
     EXPECT_THAT(metric_type, Eq(MetricType::NumAgents));
     EXPECT_THAT(std::get<std::vector<int>>(values), Eq(std::vector{2985, 3040, 2960}));
 }
+
+TEST(ParseDocument, ReturnsTheMetricsGroupedBySimulationTime) {
+    std::string log_data = "****** reading METIS data form time= 30 mins *********\n"
+                           "timeMpiSend=[0.1,0.2,0.3,]\n"
+                           "numAgents=[3,4,5,]\n"
+                           "****** reading METIS data form time= 60 mins *********\n"
+                           "totalUpdateTime=[1.1,1.2,1.3,]\n"
+                           "noBarrierUpdateTime=[1.4,1.5,1.6,]";
+
+    auto stream = std::istringstream{log_data};
+
+    const auto result = parse_document(stream);
+    const auto metrics_at_30 = result.at(30);
+    const auto metrics_at_60 = result.at(60);
+
+    EXPECT_THAT(metrics_at_30, Eq(std::vector{MetricEntry{MetricType::TimeMPISend,
+                                                          MetricValue{std::vector{0.1, 0.2, 0.3}}},
+                                              MetricEntry{MetricType::NumAgents,
+                                                          MetricValue{std::vector{3, 4, 5}}}}));
+    EXPECT_THAT(metrics_at_60,
+                Eq(std::vector{MetricEntry{MetricType::TotalUpdateTime,
+                                           MetricValue{std::vector{1.1, 1.2, 1.3}}},
+                               MetricEntry{MetricType::NoBarrierUpdateTime,
+                                           MetricValue{std::vector{1.4, 1.5, 1.6}}}}));
+}
