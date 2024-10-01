@@ -73,7 +73,7 @@ namespace playground::parser {
         return {};
     }
 
-    auto parse_metric_line(const std::string &metric_line) -> std::pair<MetricType, MetricValue> {
+    auto parse_metric_line(const std::string &metric_line) -> MetricEntry {
         const auto [metric_key, values_list] = utils::split_by(metric_line, '=');
         const auto metric_type = as_metric_type(metric_key).value();
         const auto values = internal::get_values(values_list, metric_type);
