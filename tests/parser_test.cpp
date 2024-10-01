@@ -99,12 +99,12 @@ TEST(ParseMetricLine, WorksForIntegerMetrics) {
 }
 
 TEST(ParseDocument, ReturnsTheMetricsGroupedBySimulationTime) {
-    std::string log_data = "****** reading METIS data form time= 30 mins *********\n"
-                           "timeMpiSend=[0.1,0.2,0.3,]\n"
-                           "numAgents=[3,4,5,]\n"
-                           "****** reading METIS data form time= 60 mins *********\n"
-                           "totalUpdateTime=[1.1,1.2,1.3,]\n"
-                           "noBarrierUpdateTime=[1.4,1.5,1.6,]";
+    const std::string log_data = "****** reading METIS data form time= 30 mins *********\n"
+                                 "timeMpiSend=[0.1,0.2,0.3,]\n"
+                                 "numAgents=[3,4,5,]\n"
+                                 "****** reading METIS data form time= 60 mins *********\n"
+                                 "totalUpdateTime=[1.1,1.2,1.3,]\n"
+                                 "noBarrierUpdateTime=[1.4,1.5,1.6,]";
 
     auto stream = std::istringstream{log_data};
 
