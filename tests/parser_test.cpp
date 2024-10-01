@@ -3,13 +3,14 @@
 
 #include <parser.hpp>
 
+using namespace playground::parser::internal;
 using namespace playground::parser;
 using namespace playground;
 using testing::Eq;
 
 TEST(IsHeader, ReturnsTrueIfLineIsHeader) {
     const auto header_line = std::string{"****** reading METIS data form time= 30 mins *********"};
-    EXPECT_TRUE(playground::parser::is_header(header_line));
+    EXPECT_TRUE(is_header(header_line));
 }
 
 TEST(IsHeader, ReturnsFalseIfLineIsNotHeader) {
