@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "metric_type.hpp"
+#include "metric_value.hpp"
 
 namespace playground::parser {
     [[nodiscard]] auto is_header(std::string_view line) -> bool;
@@ -15,6 +16,9 @@ namespace playground::parser {
     [[nodiscard]] auto extract_substr(const std::string &str, const std::string &from,
                                       const std::string &to) -> std::string;
     [[nodiscard]] auto as_metric_type(const std::string &key) -> std::optional<MetricType>;
+
+    [[nodiscard]] auto parse_metric_line(const std::string &metric_line)
+            -> std::pair<MetricType, MetricValue>;
 
     template<typename T>
     [[nodiscard]] auto as_vector(const std::string &str) -> std::vector<T> {

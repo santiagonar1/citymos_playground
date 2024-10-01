@@ -3,6 +3,8 @@
 #include <optional>
 #include <string>
 
+#include "utils.hpp"
+
 namespace playground::parser {
     namespace internal {
         auto is_time_mpi_send_key(const std::string &key) -> bool { return key == "timeMpiSend"; }
@@ -23,6 +25,13 @@ namespace playground::parser {
 
         auto is_no_barrier_update_time_key(const std::string &key) -> bool {
             return key == "noBarrierUpdateTime";
+        }
+
+        auto get_values(const std::string &values_list, const MetricType &metric_type)
+                -> MetricValue {
+            if (is_integer_metric(metric_type)) { return as_vector<int>(values_list); }
+
+            return as_vector<double>(values_list);
         }
     }// namespace internal
 
@@ -62,5 +71,12 @@ namespace playground::parser {
         }
 
         return {};
+    }
+
+    auto parse_metric_line(const std::string &metric_line) -> std::pair<MetricType, MetricValue> {
+        const auto [metric_key, values_list] = utils::split_by(metric_line, '=');
+        const auto metric_type = as_metric_type(metric_key).value();
+        const auto values = internal::get_values(values_list, metric_type);
+        return {metric_type, values};
     }
 }// namespace playground::parser

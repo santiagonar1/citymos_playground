@@ -89,3 +89,20 @@ TEST(GetMetricType, WorksForNoBarrierUpdateTime) {
     EXPECT_THAT(as_metric_type(no_barrier_update_time_key).value(),
                 Eq(MetricType::NoBarrierUpdateTime));
 }
+
+TEST(ParseMetricLine, ReturnsMetricTypeAndValues) {
+    const auto metric_line = std::string{"timeMpiSend=[0.414859,0.577273,0.866705,]"};
+    const auto [metric_type, values] = parse_metric_line(metric_line);
+
+    EXPECT_THAT(metric_type, Eq(MetricType::TimeMPISend));
+    EXPECT_THAT(std::get<std::vector<double>>(values),
+                Eq(std::vector{0.414859, 0.577273, 0.866705}));
+}
+
+TEST(ParseMetricLine, WorksForIntegerMetrics) {
+    const auto metric_line = std::string{"numAgents=[2985,3040,2960,]"};
+    const auto [metric_type, values] = parse_metric_line(metric_line);
+
+    EXPECT_THAT(metric_type, Eq(MetricType::NumAgents));
+    EXPECT_THAT(std::get<std::vector<int>>(values), Eq(std::vector{2985, 3040, 2960}));
+}

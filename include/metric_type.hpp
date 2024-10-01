@@ -11,6 +11,8 @@ namespace playground {
         TotalUpdateTime,
         NoBarrierUpdateTime,
     };
+
+    [[nodiscard]] auto is_integer_metric(const MetricType& metric_type) -> bool;
 }// namespace playground
 
 #endif//METRIC_TYPE_HPP
