@@ -1,10 +1,32 @@
 #include "parser.hpp"
 
+#include <optional>
 #include <string>
 
 namespace playground::parser {
-    auto is_header(const std::string_view line) -> bool { return line[0] == '*'; }
+    namespace internal {
+        auto is_time_mpi_send_key(const std::string &key) -> bool { return key == "timeMpiSend"; }
 
+        auto is_time_mpi_recv_key(const std::string &key) -> bool { return key == "timeMpiRecv"; }
+
+        auto is_time_to_completion_key(const std::string &key) -> bool {
+            return key == "timeToCompletion";
+        }
+
+        auto is_speedups_key(const std::string &key) -> bool { return key == "speedups"; }
+
+        auto is_num_agents_key(const std::string &key) -> bool { return key == "numAgents"; }
+
+        auto is_total_update_time_key(const std::string &key) -> bool {
+            return key == "totalUpdateTime";
+        }
+
+        auto is_no_barrier_update_time_key(const std::string &key) -> bool {
+            return key == "noBarrierUpdateTime";
+        }
+    }// namespace internal
+
+    auto is_header(const std::string_view line) -> bool { return line[0] == '*'; }
 
     auto extract_substr(const std::string &str, const std::string &from, const std::string &to)
             -> std::string {
@@ -20,5 +42,25 @@ namespace playground::parser {
         const auto mins_keyword = std::string{"mins"};
         const auto number_str = extract_substr(header_line, time_keyword, mins_keyword);
         return std::stoi(number_str);
+    }
+
+    auto as_metric_type(const std::string &key) -> std::optional<MetricType> {
+        if (internal::is_time_mpi_send_key(key)) { return MetricType::TimeMPISend; }
+
+        if (internal::is_time_mpi_recv_key(key)) { return MetricType::TimeMPIRecv; }
+
+        if (internal::is_time_to_completion_key(key)) { return MetricType::TimeToCompletion; }
+
+        if (internal::is_speedups_key(key)) { return MetricType::Speedups; }
+
+        if (internal::is_num_agents_key(key)) { return MetricType::NumAgents; }
+
+        if (internal::is_total_update_time_key(key)) { return MetricType::TotalUpdateTime; }
+
+        if (internal::is_no_barrier_update_time_key(key)) {
+            return MetricType::NoBarrierUpdateTime;
+        }
+
+        return {};
     }
 }// namespace playground::parser
