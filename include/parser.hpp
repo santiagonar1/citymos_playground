@@ -40,6 +40,9 @@ namespace playground::parser {
     [[nodiscard]] auto parse_document(std::istream &input)
             -> std::map<SimulationTime, std::vector<MetricEntry>>;
 
+    [[nodiscard]] auto parse_document(const std::string &input_path)
+            -> std::map<SimulationTime, std::vector<MetricEntry>>;
+
 }// namespace playground::parser
 
 #endif//PARSER_HPP

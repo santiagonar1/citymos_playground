@@ -1,5 +1,6 @@
 #include "parser.hpp"
 
+#include <fstream>
 #include <optional>
 #include <string>
 
@@ -89,5 +90,14 @@ namespace playground::parser {
         }
 
         return result;
+    }
+
+    auto parse_document(const std::string &input_path)
+            -> std::map<SimulationTime, std::vector<MetricEntry>> {
+        std::ifstream file{input_path};
+
+        if (not file.is_open()) { throw std::runtime_error("Could not open file"); }
+
+        return parse_document(file);
     }
 }// namespace playground::parser
