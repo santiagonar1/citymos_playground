@@ -1,9 +1,9 @@
 #include <iostream>
-#include <random>
 
 #include <data_provider.hpp>
+#include <measurement.hpp>
+#include <policy.hpp>
 
-auto select_random(const std::vector<int> &options) -> int;
 auto operator<<(std::ostream &os, const std::vector<playground::MetricEntry> &metrics)
         -> std::ostream &;
 
@@ -16,25 +16,21 @@ int main() {
     const auto data_provider = playground::DataProvider{input_data};
     const auto simulation_times = data_provider.simulation_times_available();
     const auto available_ranks = data_provider.num_ranks_available();
+    auto num_ranks = available_ranks[0];
 
+    const auto policy = playground::Policy{available_ranks};
+
+    auto measurements = std::vector<playground::Measurement>{};
     for (const auto &simulation_time: simulation_times) {
-        const auto num_ranks = select_random(available_ranks);
         const auto metrics = data_provider.get_metrics_for(num_ranks, simulation_time);
         std::cout << "Simulation time: " << simulation_time << "\n";
         std::cout << "Running with: " << num_ranks << " ranks\n";
         std::cout << metrics << "\n\n";
+
+        measurements.emplace_back(simulation_time, num_ranks, metrics);
+        num_ranks = policy.get_num_ranks(measurements);
     }
     return 0;
-}
-
-auto select_random(const std::vector<int> &options) -> int {
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_int_distribution distr(0, static_cast<int>(options.size()) - 1);
-
-    int random_index = distr(gen);
-
-    return options[random_index];
 }
 
 auto operator<<(std::ostream &os, const std::vector<playground::MetricEntry> &metrics)
