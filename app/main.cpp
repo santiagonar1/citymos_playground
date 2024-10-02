@@ -4,6 +4,7 @@
 #include <logger.hpp>
 #include <measurement.hpp>
 #include <policy.hpp>
+#include <utility>
 
 auto operator<<(std::ostream &os, const std::vector<playground::MetricEntry> &metrics)
         -> std::ostream &;
@@ -41,11 +42,9 @@ int main() {
 
 auto operator<<(std::ostream &os, const std::vector<playground::MetricEntry> &metrics)
         -> std::ostream & {
+    auto delimiter = std::string{};
     os << "[";
-    for (size_t i = 0; i < metrics.size(); ++i) {
-        if (i > 0) os << ", ";
-        os << metrics[i];
-    }
+    for (const auto &metric: metrics) { os << std::exchange(delimiter, ", ") << metric; }
     os << "]";
     return os;
 }
