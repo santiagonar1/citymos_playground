@@ -1,25 +1,17 @@
 #include "metric_value.hpp"
 
+#include <utility>
+
 namespace playground {
     namespace internal {
         struct MetricValuePrinter {
             std::ostream &os;
 
-            void operator()(const std::vector<int> &values) const {
+            template<typename T>
+            void operator()(const std::vector<T> &values) const {
+                auto delimiter = std::string{};
                 os << "[";
-                for (size_t i = 0; i < values.size(); ++i) {
-                    if (i > 0) os << ", ";
-                    os << values[i];
-                }
-                os << "]";
-            }
-
-            void operator()(const std::vector<double> &values) const {
-                os << "[";
-                for (size_t i = 0; i < values.size(); ++i) {
-                    if (i > 0) os << ", ";
-                    os << values[i];
-                }
+                for (const auto value: values) { os << std::exchange(delimiter, ", ") << value; }
                 os << "]";
             }
         };
