@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include <data_provider.hpp>
+#include <logger.hpp>
 #include <measurement.hpp>
 #include <policy.hpp>
 
@@ -12,6 +13,9 @@ int main() {
             {1, "/home/santiago/git/citymos_playground/data/1_rank.txt"},
             {2, "/home/santiago/git/citymos_playground/data/2_ranks.txt"},
             {3, "/home/santiago/git/citymos_playground/data/3_ranks.txt"}};
+
+    const auto log_file = std::string{"/home/santiago/git/citymos_playground/data/log.txt"};
+    auto logger = playground::Logger(log_file, 30);
 
     const auto data_provider = playground::DataProvider{input_data};
     const auto simulation_times = data_provider.simulation_times_available();
@@ -27,7 +31,9 @@ int main() {
         std::cout << "Running with: " << num_ranks << " ranks\n";
         std::cout << metrics << "\n\n";
 
-        measurements.emplace_back(simulation_time, num_ranks, metrics);
+        const auto measurement = playground::Measurement{simulation_time, num_ranks, metrics};
+        measurements.emplace_back(measurement);
+        logger.log(measurement);
         num_ranks = policy.get_num_ranks(measurements);
     }
     return 0;
